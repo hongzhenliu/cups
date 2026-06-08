@@ -1,0 +1,34 @@
+name: Build CUPS 2.4.20 amd64 GHCR Image
+on:
+  push:
+    branches: [ 2.4.x ] # 只在2.4.x分支代码变更时触发
+  workflow_dispatch: # 页面可手动运行
+
+jobs:
+  build-amd64:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # 登录GHCR，内置TOKEN无需手动密钥
+      - name: Login GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ github.TOKEN }}
+
+      - name: Build & Push linux/amd64 only
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          platforms: linux/amd64
+          push: true
+          # 镜像标签区分2.4.x版本
+          tags: |
+            ghcr.io/${{ github.repository_owner }}/cups:2.4.20-latest
+            ghcr.io/${{ github.repository_owner }}/cups:2.4.20-${{ github.sha }}
