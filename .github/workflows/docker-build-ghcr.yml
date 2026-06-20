@@ -30,4 +30,4 @@ jobs:
           push: true
           # 镜像标签区分2.5b1版本
           tags: |
-            ghcr.io/liuhz/cups:2.5b1
+            ghcr.io/${{ github.repository_owner }}/cups:2.5b1
